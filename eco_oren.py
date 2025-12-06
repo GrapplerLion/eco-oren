@@ -176,7 +176,7 @@ async def useful_links(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 async def handle_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обрабатывает нажатия кнопок главного меню."""
     text = update.message.text
-    if text == "🗺️ Пункты приема":
+    if text == "♻️ Пункты приема":
         await recycling_points(update, context)
     elif text == "📚 Как сортировать?":
         await sorting_guide(update, context)
