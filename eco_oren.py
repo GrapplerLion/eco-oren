@@ -119,14 +119,13 @@ async def what_where(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return WAITING_FOR_ITEM
 
 async def handle_waste_item(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text.lower().strip()
+    text = update.message.text.strip()
 
-    # Чтобы "Пластик", "Стекло" не ловились здесь
-    if text in ["пластик", "стекло", "бумага", "металл", "батарейки"]:
+    # Игнорируем кнопки главного меню, чтобы они не попадали в поиск
+    if text in ["♻️ Пункты приема", "📚 Как сортировать?", "❓ Что куда?", "🔗 Полезные ссылки", "⬅️ Назад"]:
         return ConversationHandler.END
 
-    item = WASTE_DICTIONARY.get(text)
-
+    item = WASTE_DICTIONARY.get(text.lower())
     if item:
         response = (
             f"*{text.capitalize()}*\n\n"
@@ -134,13 +133,11 @@ async def handle_waste_item(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"📌 {item['instruction']}"
         )
     else:
-        response = (
-            f"Не нашёл информацию о «{text}».\n"
-            "Попробуй другое название."
-        )
+        response = f"Не нашёл информацию о «{text}».\nПопробуй другое название."
 
     await update.message.reply_text(response)
     return WAITING_FOR_ITEM
+
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
