@@ -74,7 +74,7 @@ USEFUL_LINKS = """
 def main_menu_keyboard():
     """Создает клавиатуру главного меню."""
     keyboard = [
-        [KeyboardButton("🗺️ Пункты приема"), KeyboardButton("📚 Как сортировать?")],
+        [KeyboardButton("♻️ Пункты приема"), KeyboardButton("📚 Как сортировать?")],
         [KeyboardButton("❓ Что куда?"), KeyboardButton("🔗 Полезные ссылки")],
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
@@ -128,9 +128,7 @@ async def show_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         response += f"*{i}. {point['name']}*\n"
         response += f"📍 Адрес: {point['address']}\n"
         response += f"🕒 Часы работы: {point['working_hours']}\n"
-        if point.get('phone'):
-            response += f"📞 Телефон: {point['phone']}\n"
-        response += "\n"
+        response += f"🔗 Ссылка: {point['link']}\n"
 
     await update.message.reply_text(response)
 
