@@ -111,7 +111,7 @@ async def show_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         "батарейки": "batteries"
     }
 
-    if user_choice == "⬅️ назад":
+    if user_choice == "⬅️ Назад":
         await start(update, context)
         return
 
