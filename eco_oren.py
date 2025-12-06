@@ -101,7 +101,7 @@ async def recycling_points(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 async def show_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обрабатывает нажатие на кнопку категории отходов и выдает адреса."""
     user_choice = update.message.text.lower()
-
+    
     # Сопоставление русских названий с ключами JSON
     category_mapping = {
         "пластик": "plastic",
