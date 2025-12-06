@@ -3,3 +3,6 @@
 [user]
 	mail = galeev5607@gmail.com
 	name = GrapplerLion
+	email = galeev5607@gmail.com
+[credential]
+	helper = cache --timeout=3600
