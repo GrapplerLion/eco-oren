@@ -100,8 +100,8 @@ async def recycling_points(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 async def show_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обрабатывает нажатие на кнопку категории отходов и выдает адреса."""
-    user_choice = update.message.text.lower()   
-        
+    user_choice = update.message.text.lower()
+    
     # Сопоставление русских названий с ключами JSON
     category_mapping = {
         "пластик": "plastic",
@@ -111,14 +111,15 @@ async def show_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         "батарейки": "batteries"
     }
 
-    if user_choice == "⬅️ назад":
+    # Проверяем "назад" в разных вариантах написания
+    if "⬅️" in user_choice or "назад" in user_choice:
         await start(update, context)
         return
 
     category_key = category_mapping.get(user_choice)
     
     if not category_key or category_key not in RECYCLING_POINTS:
-        await update.message.reply_text("Категория не найдена.")
+        await update.message.reply_text(f"Категория '{update.message.text}' не найдена.")
         return
 
     category_data = RECYCLING_POINTS[category_key]
@@ -127,8 +128,9 @@ async def show_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     for i, point in enumerate(category_data["points"], 1):
         response += f"*{i}. {point['name']}*\n"
         response += f"📍 Адрес: {point['address']}\n"
-        response += f"🕒 Часы работы: {point['working_hours']}\n"
-        response += f"🔗 Ссылка: {point['link']}\n"
+        # Используем .get() чтобы избежать KeyError если ключей нет
+        response += f"🕒 Часы работы: {point.get('working_hours', 'не указано')}\n"
+        response += f"🔗 Ссылка: {point.get('link', 'нет ссылки')}\n\n"
 
     await update.message.reply_text(response)
 
@@ -184,10 +186,13 @@ async def handle_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         await what_where(update, context)
     elif text == "🔗 Полезные ссылки":
         await useful_links(update, context)
-    elif text == "⬅️ назад":
+    elif "⬅️" in text or text.lower() == "назад":
         await start(update, context)
     else:
-        await update.message.reply_text("Используй меню для навигации.", reply_markup=main_menu_keyboard())
+        # Если это не кнопки главного меню, возможно это кнопки из других меню
+        # которые должны обрабатываться другими обработчиками
+        # Поэтому не отвечаем здесь
+        pass
 
 def main() -> None:
     """Основная функция, запускающая бота."""
@@ -208,14 +213,26 @@ def main() -> None:
     )
     application.add_handler(conv_handler)
 
-    # Обработчик для кнопок с пунктами приема
+    # ВАЖНО: Сначала специфичные обработчики, потом общие
+    
+    # 1. Обработчик для кнопок категорий (Пластик, Стекло и т.д.)
     application.add_handler(MessageHandler(filters.Regex("^(Пластик|Стекло|Бумага|Металл|Батарейки)$"), show_point))
-
-    # Обработчик для кнопки "Назад"
-    application.add_handler(MessageHandler(filters.Regex("^(⬅️ Назад)$"), handle_main_menu))
-
-    # Обработчик для всех остальных текстовых сообщений (кнопки главного меню)
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_main_menu))
+    
+    # 2. Обработчик для кнопки "Назад" из меню категорий
+    application.add_handler(MessageHandler(filters.Regex("^(⬅️ Назад)$"), 
+                                          lambda u, c: start(u, c)))
+    
+    # 3. Обработчик для кнопок главного меню (только для главного меню)
+    application.add_handler(MessageHandler(
+        filters.Regex("^(♻️ Пункты приема|📚 Как сортировать\?|❓ Что куда\?|🔗 Полезные ссылки)$"), 
+        handle_main_menu
+    ))
+    
+    # 4. Обработчик для кнопки "Назад" в главном меню
+    application.add_handler(MessageHandler(
+        filters.Regex("^(⬅️ назад|⬅️ Назад)$"), 
+        lambda u, c: start(u, c)
+    ))
 
     # Запускаем бота
     print("Бот запущен...")
