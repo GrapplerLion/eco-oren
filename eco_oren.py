@@ -111,7 +111,7 @@ async def show_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         "батарейки": "batteries"
     }
 
-    if user_choice == "⬅️ Назад":
+    if user_choice == "⬅️ назад":
         await start(update, context)
         return
 
@@ -184,7 +184,7 @@ async def handle_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         await what_where(update, context)
     elif text == "🔗 Полезные ссылки":
         await useful_links(update, context)
-    elif text == "⬅️ Назад":
+    elif text == "⬅️ назад":
         await start(update, context)
     else:
         await update.message.reply_text("Используй меню для навигации.", reply_markup=main_menu_keyboard())
