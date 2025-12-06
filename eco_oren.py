@@ -10,7 +10,7 @@ from telegram.ext import (
     ConversationHandler,
 )
 
-BOT_TOKEN = "YOUR_TOKEN"
+BOT_TOKEN = "8107170808:AAGebZU8yqKjkk0PZEB456CKdH-VZcwsY1Y"
 
 # --- Логи ---
 logging.basicConfig(
